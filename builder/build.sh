@@ -16,6 +16,7 @@ BUILD_PATH="/build"
 
 # config vars for the root file system
 HYPRIOT_OS_VERSION="v0.8.5"
+ROOTFS_TAR_CHECKSUM="02b0607700b8da6b393027ae9e168e28524c4cd9a52d3484fee7d1d0a1a15396"
 ROOTFS_TAR="rootfs-armhf-raspbian-${HYPRIOT_OS_VERSION}.tar.gz"
 ROOTFS_TAR_PATH="${BUILD_RESULT_PATH}/${ROOTFS_TAR}"
 
@@ -25,6 +26,7 @@ echo TRAVIS_TAG="${TRAVIS_TAG}"
 # name of the ready made raw image for RPi
 RAW_IMAGE="rpi-raw.img"
 RAW_IMAGE_VERSION="v0.1.1"
+RAW_IMAGE_CHECKSUM=""
 
 # name of the sd-image we gonna create
 HYPRIOT_IMAGE_VERSION=${VERSION:="dirty"}
@@ -47,6 +49,13 @@ mkdir ${BUILD_PATH}
 # download our base root file system
 if [ ! -f "${ROOTFS_TAR_PATH}" ]; then
   wget -q -O ${ROOTFS_TAR_PATH} https://github.com/hypriot/os-rootfs/releases/download/${HYPRIOT_OS_VERSION}/${ROOTFS_TAR}
+fi
+
+# verify checksum of our root filesystem
+echo "${ROOTFS_TAR_CHECKSUM} *${ROOTFS_TAR_PATH}" | sha256sum -c - 2>/dev/null
+if [[ $?  -ne 0 ]]; then
+  echo checksum root filesystem fail
+  exit 3
 fi
 
 # extract root file system
@@ -91,6 +100,13 @@ tar -czf /image_with_kernel_root.tar.gz -C ${BUILD_PATH} .
 # download the ready-made raw image for the RPi
 if [ ! -f "${BUILD_RESULT_PATH}/${RAW_IMAGE}.zip" ]; then
   wget -q -O ${BUILD_RESULT_PATH}/${RAW_IMAGE}.zip https://github.com/hypriot/image-builder-raw/releases/download/${RAW_IMAGE_VERSION}/${RAW_IMAGE}.zip
+fi
+
+# verify checksum of the ready-made raw image
+echo "${RAW_IMAGE_CHECKSUM} *${BUILD_RESULT_PATH}/${RAW_IMAGE}.zip" | sha256sum -c - 2>/dev/null
+if [[ $?  -ne 0 ]]; then
+  echo checksum ready-made raw image fail
+  exit 3
 fi
 
 unzip -p ${BUILD_RESULT_PATH}/${RAW_IMAGE} > "/${HYPRIOT_IMAGE_NAME}"
