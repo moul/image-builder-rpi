@@ -25,7 +25,7 @@ echo TRAVIS_TAG="${TRAVIS_TAG}"
 
 # name of the ready made raw image for RPi
 RAW_IMAGE="rpi-raw.img"
-RAW_IMAGE_VERSION="v0.1.1"
+RAW_IMAGE_VERSION="v0.1.2"
 RAW_IMAGE_CHECKSUM=""
 
 # name of the sd-image we gonna create
@@ -52,11 +52,7 @@ if [ ! -f "${ROOTFS_TAR_PATH}" ]; then
 fi
 
 # verify checksum of our root filesystem
-echo "${ROOTFS_TAR_CHECKSUM} *${ROOTFS_TAR_PATH}" | sha256sum -c - 2>/dev/null
-if [[ $?  -ne 0 ]]; then
-  echo checksum root filesystem fail
-  exit 3
-fi
+echo "${ROOTFS_TAR_CHECKSUM} ${ROOTFS_TAR_PATH}" | sha256sum -c -
 
 # extract root file system
 tar xf ${ROOTFS_TAR_PATH} -C ${BUILD_PATH}
@@ -103,11 +99,7 @@ if [ ! -f "${BUILD_RESULT_PATH}/${RAW_IMAGE}.zip" ]; then
 fi
 
 # verify checksum of the ready-made raw image
-echo "${RAW_IMAGE_CHECKSUM} *${BUILD_RESULT_PATH}/${RAW_IMAGE}.zip" | sha256sum -c - 2>/dev/null
-if [[ $?  -ne 0 ]]; then
-  echo checksum ready-made raw image fail
-  exit 3
-fi
+echo "${RAW_IMAGE_CHECKSUM} ${BUILD_RESULT_PATH}/${RAW_IMAGE}.zip" | sha256sum -c -
 
 unzip -p ${BUILD_RESULT_PATH}/${RAW_IMAGE} > "/${HYPRIOT_IMAGE_NAME}"
 
