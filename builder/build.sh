@@ -25,8 +25,8 @@ echo TRAVIS_TAG="${TRAVIS_TAG}"
 
 # name of the ready made raw image for RPi
 RAW_IMAGE="rpi-raw.img"
-RAW_IMAGE_VERSION="v0.1.2"
-RAW_IMAGE_CHECKSUM=""
+RAW_IMAGE_VERSION="v0.1.3"
+RAW_IMAGE_CHECKSUM="a323b45aa3f26e63a32de14c63d92417e63bf0224f7c435d38a923d322563e53"
 
 # name of the sd-image we gonna create
 HYPRIOT_IMAGE_VERSION=${VERSION:="dirty"}
